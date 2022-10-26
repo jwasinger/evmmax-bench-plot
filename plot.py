@@ -142,7 +142,6 @@ def scatterplot_ns_data(fname: str, name: str, graph_range, annotates: [bool], m
                 
                 ax.errorbar(x=x, y=y, xerr=0.0, yerr=y_err, fmt=markers[i], color=color)
         else:
-           continue
            if annotates[i]:
                for x, y in zip(x_vals, y_vals):
                    ax.annotate(y, (float(x) + 0.2, float(y)))
@@ -278,7 +277,7 @@ mulmont_benches = go_arith_benchmarks['mulmont']
 mulmont_non_unrolled_data = format_bench_data_for_graphing((1, 64), go_arith_benchmarks['mulmont']['non-unrolled'], 'mulmont', 'red')
 mulmont_generic_data = format_bench_data_for_graphing((1, 64), go_arith_benchmarks['mulmont']['generic'], 'mulmont-generic', 'blue')
 setmod_non_unrolled_data = format_bench_data_for_graphing((1, 64), go_arith_benchmarks['setmod']['non-unrolled'], 'setmod-non-unrolled', 'red')
-setmod_generic_data = format_bench_data_for_graphing((1, 10000), go_arith_benchmarks['setmod']['generic'], 'setmod-generic', 'blue')
+setmod_generic_data = format_bench_data_for_graphing((1, 100000), go_arith_benchmarks['setmod']['generic'], 'setmod-generic', 'blue')
 addmod_non_unrolled_data = format_bench_data_for_graphing((1, 64), go_arith_benchmarks['addmod']['non-unrolled'], 'addmod-non-unrolled', 'red')
 submod_non_unrolled_data = format_bench_data_for_graphing((1, 64), go_arith_benchmarks['submod']['non-unrolled'], 'submod-non-unrolled', 'red')
 
@@ -292,7 +291,7 @@ setmod_non_unrolled_small_limbs_data = format_bench_data_for_graphing((1, 12), g
 
 # linear cost for setmod up to cutoff
 setmod_low_eqn, setmod_low_cost = fit_linear((1, 32), (1, fast_mulmont_cutoff), setmod_non_unrolled_data, False)
-setmod_high_eqn, setmod_high_cost = fit_linear((fast_mulmont_cutoff, 10000), (fast_mulmont_cutoff, 10000), setmod_generic_data, True)
+setmod_high_eqn, setmod_high_cost = fit_linear((fast_mulmont_cutoff, 100000), (fast_mulmont_cutoff, 100000), setmod_generic_data, True)
 setmod_model = stitch_model(setmod_low_cost, setmod_high_cost, fast_mulmont_cutoff)
 
 mulmont_evmmax = stitch_data(go_arith_benchmarks['mulmont']['non-unrolled'], go_arith_benchmarks['mulmont']['generic'], fast_mulmont_cutoff)
@@ -307,7 +306,7 @@ scatterplot_ns_data("charts/mulmontmax_all.png", "MULMONTMAX Arithmetic Benchmar
 scatterplot_ns_data("charts/mulmontmax_cutoff.png", "MULMONTMAX Arithmetic Benchmarks with Gas Model", (1, 64), [False, False], ["o", "-"], [mulmont_evmmax, mulmont_evmmax_model_graphing_data])
 
 setmod_evmmax_model_graphing_data = prep_model_data_for_graphing(setmod_model, "setmod", (1, 10000))
-scatterplot_ns_data("charts/setmodmax_all.png", "SETMODMAX model", (1, 10000), [False, False], ["o", "-"], [setmod_evmmax, setmod_evmmax_model_graphing_data])
+scatterplot_ns_data("charts/setmodmax_all.png", "SETMODMAX model", (1, 100000), [False, False], ["o", "-"], [setmod_evmmax, setmod_evmmax_model_graphing_data])
 setmod_evmmax_model_graphing_data = prep_model_data_for_graphing(setmod_model, "setmod", (1, 10000))
 scatterplot_ns_data("charts/setmodmax_cutoff.png", "SETMODMAX model", (1, 64), [False, False], ["o", "-"], [setmod_evmmax, setmod_evmmax_model_graphing_data])
 
