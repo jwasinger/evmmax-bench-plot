@@ -241,8 +241,20 @@ def stitch_data(data1, data2, cutoff: int):
 
     return (graph_range, xs, ys, y_errs, 'red', 'place-holder-name', 'o')
 
-def prep_model_data_for_graphing(model, name, plot_range):
-    return (plot_range, [item[0] for item in model if item[0] <= plot_range[1] and item[0]  >= plot_range[0]], [item[1] for item in model if item[0] <= plot_range[1] and item[0]  >= plot_range[0]], [], 'black', name, 'o')
+def prep_models_for_graphing(models, name, xs):
+    ys = []
+    x_idx = 0
+
+    for model, range_max in models:
+        while x_idx < len(xs) and xs[x_idx] <= range_max:
+            y = eval_model(model, xs[x_idx])
+            ys.append(y)
+            x_idx += 1
+    
+    return (min(xs), max(xs), xs, ys, 'black', name, 'o')
+
+# def prep_model_data_for_graphing(model, name, plot_range):
+#     return (plot_range, [item[0] for item in model if item[0] <= plot_range[1] and item[0]  >= plot_range[0]], [item[1] for item in model if item[0] <= plot_range[1] and item[0]  >= plot_range[0]], [], 'black', name, 'o')
 
 def strip_graphing_data(x_range, data):
     val = list(data)
@@ -270,6 +282,22 @@ def strip_graphing_data(x_range, data):
     val[1] = x_vals
     val[2] = y_vals
     return tuple(val)
+
+def eval_model(model: [int], x: int) -> int:
+    result = 0
+    for i, coef in enumerate(model):
+        result += (coef * x) ** (len(model) - 1 - i)
+
+    return result
+
+
+def format_model_eqn_for_graphing(model: [int], xs: [int]):
+    result = []
+
+    for x in xs:
+        result.append(eval_model(model, x))
+
+    return result
 
 fast_mulmont_cutoff = 49
 mulmont_benches = go_arith_benchmarks['mulmont']
