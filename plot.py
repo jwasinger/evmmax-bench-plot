@@ -276,43 +276,65 @@ mulmont_benches = go_arith_benchmarks['mulmont']
 #eqn_mulmont_lof, mulmont_lof = fit_quadratic(zip([mulmont_benches['y_vals'])[:fast_mulmont_cutoff]
 mulmont_non_unrolled_data = format_bench_data_for_graphing((1, 64), go_arith_benchmarks['mulmont']['non-unrolled'], 'mulmont', 'red')
 mulmont_generic_data = format_bench_data_for_graphing((1, 64), go_arith_benchmarks['mulmont']['generic'], 'mulmont-generic', 'blue')
-setmod_non_unrolled_data = format_bench_data_for_graphing((1, 64), go_arith_benchmarks['setmod']['non-unrolled'], 'setmod-non-unrolled', 'red')
-setmod_generic_data = format_bench_data_for_graphing((1, 100000), go_arith_benchmarks['setmod']['generic'], 'setmod-generic', 'blue')
+
 addmod_non_unrolled_data = format_bench_data_for_graphing((1, 64), go_arith_benchmarks['addmod']['non-unrolled'], 'addmod-non-unrolled', 'red')
 submod_non_unrolled_data = format_bench_data_for_graphing((1, 64), go_arith_benchmarks['submod']['non-unrolled'], 'submod-non-unrolled', 'red')
+
+addmod_generic_data = format_bench_data_for_graphing((1, 100000), go_arith_benchmarks['addmod']['generic'], 'addmod-generic', 'blue')
+submod_generic_data = format_bench_data_for_graphing((1, 100000), go_arith_benchmarks['submod']['generic'], 'submod-generic', 'green')
+
+# setmod_non_unrolled_data = format_bench_data_for_graphing((1, 64), go_arith_benchmarks['setmod']['non-unrolled'], 'setmod-non-unrolled', 'red')
+setmod_generic_data = format_bench_data_for_graphing((1, 100000), go_arith_benchmarks['setmod']['generic'], 'setmod-generic', 'blue')
 
 #scatterplot_ns_data("charts/mulmont_generic.png", "MULMONTMAX Generic Benchmarks", False, [mulmont_non_unrolled_data, mulmont_generic_data])
 #scatterplot_ns_data('charts/setmod.png', 'SETMOD Benchmarks', False, [setmod_non_unrolled_data, setmod_generic_data])
 #scatterplot_ns_data('charts/addmod.png', 'ADDMOD Benchmarks', False, [addmod_non_unrolled_data])
 #scatterplot_ns_data('charts/submod.png', 'SUBMOD Benchmarks', False, [submod_non_unrolled_data])
 
-mulmont_non_unrolled_small_limbs_data = format_bench_data_for_graphing((1, 12), go_arith_benchmarks['mulmont']['non-unrolled'], 'mulmont', 'red')
-setmod_non_unrolled_small_limbs_data = format_bench_data_for_graphing((1, 12), go_arith_benchmarks['setmod']['non-unrolled'], 'setmod', 'green')
+#mulmont_non_unrolled_small_limbs_data = format_bench_data_for_graphing((1, 12), go_arith_benchmarks['mulmont']['non-unrolled'], 'mulmont', 'red')
+#setmod_non_unrolled_small_limbs_data = format_bench_data_for_graphing((1, 12), go_arith_benchmarks['setmod']['non-unrolled'], 'setmod', 'green')
 
 # linear cost for setmod up to cutoff
-setmod_low_eqn, setmod_low_cost = fit_linear((1, 32), (1, fast_mulmont_cutoff), setmod_non_unrolled_data, False)
-setmod_high_eqn, setmod_high_cost = fit_linear((fast_mulmont_cutoff, 100000), (fast_mulmont_cutoff, 100000), setmod_generic_data, True)
-setmod_model = stitch_model(setmod_low_cost, setmod_high_cost, fast_mulmont_cutoff)
+# setmod_low_eqn, setmod_low_cost = fit_linear((1, 32), (1, fast_mulmont_cutoff), setmod_non_unrolled_data, False)
+setmod_eqn, setmod_model = fit_linear((1, 16), (1, 100000), setmod_generic_data, True)
+# setmod_model = stitch_model(setmod_low_cost, setmod_high_cost, fast_mulmont_cutoff)
 
 mulmont_evmmax = stitch_data(go_arith_benchmarks['mulmont']['non-unrolled'], go_arith_benchmarks['mulmont']['generic'], fast_mulmont_cutoff)
-setmod_evmmax = stitch_data(go_arith_benchmarks['setmod']['non-unrolled'], go_arith_benchmarks['setmod']['generic'], fast_mulmont_cutoff)
+# setmod_evmmax = stitch_data(go_arith_benchmarks['setmod']['non-unrolled'], go_arith_benchmarks['setmod']['generic'], fast_mulmont_cutoff)
 
 mulmont_eqn_low, mulmont_cost_low = fit_quadratic((1, 12), (1, fast_mulmont_cutoff), mulmont_evmmax, True)
 mulmont_eqn_hi, mulmont_cost_hi = fit_quadratic((fast_mulmont_cutoff, 10000), (fast_mulmont_cutoff, 10000), mulmont_evmmax, True)
 mulmont_model = stitch_model(mulmont_cost_low, mulmont_cost_hi, fast_mulmont_cutoff)
+
+import pdb; pdb.set_trace()
+
+# mulmont_eqn_low = 
+
+
+# mulmont_eqn_low = 
+# TODO addmod/submod with model on graph
+
+# mulmont_eqn_low = [2.12, 1.29, 8.0482]
+# mulmont_eqn_hi = [0.01, 246.89, 22393.199999999997] 
+
+scatterplot_ns_data("charts/addmodx_low.png", "addmodx low limbs", (1, 12), [False, False], ["o", 'o'], [submod_generic_data, addmod_generic_data])
+scatterplot_ns_data("charts/addmodx_med.png", "addmodx medium limbs", (1, 100), [False, False], ["o", 'o'], [submod_generic_data, addmod_generic_data])
+scatterplot_ns_data("charts/addmodx_all.png", "addmodx all limbs", (1, 100000), [False, False], ["o", 'o'], [submod_generic_data, addmod_generic_data])
 
 mulmont_evmmax_model_graphing_data = prep_model_data_for_graphing(mulmont_model, 'mulmont', (1, 100000))
 scatterplot_ns_data("charts/mulmontmax_all.png", "MULMONTMAX Arithmetic Benchmarks with Gas Model", (1, 100000), [False, False], ["o", "-"], [mulmont_evmmax, mulmont_evmmax_model_graphing_data])
 scatterplot_ns_data("charts/mulmontmax_cutoff.png", "MULMONTMAX Arithmetic Benchmarks with Gas Model", (1, 64), [False, False], ["o", "-"], [mulmont_evmmax, mulmont_evmmax_model_graphing_data])
 
 setmod_evmmax_model_graphing_data = prep_model_data_for_graphing(setmod_model, "setmod", (1, 10000))
-scatterplot_ns_data("charts/setmodmax_all.png", "SETMODMAX model", (1, 100000), [False, False], ["o", "-"], [setmod_evmmax, setmod_evmmax_model_graphing_data])
-setmod_evmmax_model_graphing_data = prep_model_data_for_graphing(setmod_model, "setmod", (1, 10000))
-scatterplot_ns_data("charts/setmodmax_cutoff.png", "SETMODMAX model", (1, 64), [False, False], ["o", "-"], [setmod_evmmax, setmod_evmmax_model_graphing_data])
+scatterplot_ns_data("charts/setmodmax_all.png", "SETMODMAX model", (1, 100000), [False, False], ["o", "-"], [setmod_generic_data, setmod_evmmax_model_graphing_data])
+scatterplot_ns_data("charts/setmodmax_cutoff.png", "SETMODMAX model", (1, 64), [False, False], ["o", "-"], [setmod_generic_data, setmod_evmmax_model_graphing_data])
+scatterplot_ns_data("charts/setmodmax_low.png", "SETMODMAX model", (1, 16), [False, False], ["o", "-"], [setmod_generic_data, setmod_evmmax_model_graphing_data])
 
-mulmont_evmmax_model_low_limbs_graphing_data = strip_graphing_data((1, 12), mulmont_evmmax_model_graphing_data)
-scatterplot_ns_data("charts/mulmontmax_low.png", "MULMONTMAX Arithmetic Benchmarks with Gas Model", (1, 12), [True, True], ["o", "o"], [mulmont_non_unrolled_small_limbs_data, mulmont_evmmax_model_low_limbs_graphing_data])
-mulmont_evmmax_model_graphing_data = list(mulmont_evmmax_model_graphing_data)
+# These are broken:
 
-setmod_evmmax_model_low_limbs_graphing_data = strip_graphing_data((1, 12), setmod_evmmax_model_graphing_data)
-scatterplot_ns_data("charts/setmodmax_low.png", "SETMODMAX Benchmarks with Gas Model", (1, 12), [True, True], ["o", "o"], [setmod_non_unrolled_small_limbs_data, setmod_evmmax_model_low_limbs_graphing_data])
+# mulmont_evmmax_model_low_limbs_graphing_data = strip_graphing_data((1, 12), mulmont_evmmax_model_graphing_data)
+# scatterplot_ns_data("charts/mulmontmax_low.png", "MULMONTMAX Arithmetic Benchmarks with Gas Model", (1, 12), [True, True], ["o", "o"], [mulmont_non_unrolled_small_limbs_data, mulmont_evmmax_model_low_limbs_graphing_data])
+# mulmont_evmmax_model_graphing_data = list(mulmont_evmmax_model_graphing_data)
+
+# setmod_evmmax_model_low_limbs_graphing_data = strip_graphing_data((1, 12), setmod_evmmax_model_graphing_data)
+# scatterplot_ns_data("charts/setmodmax_low.png", "SETMODMAX Benchmarks with Gas Model", (1, 12), [True, True], ["o", "o"], [setmod_non_unrolled_small_limbs_data, setmod_evmmax_model_low_limbs_graphing_data])
