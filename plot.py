@@ -109,6 +109,7 @@ def scatterplot_ns_data(fname: str, name: str, graph_range, annotates: [bool], m
                 stripped_yerrs.append(y_err_val)
         stripped_args.append((arg[0], stripped_xs, stripped_ys, stripped_yerrs, arg[4], arg[5], arg[6]))
 
+    import pdb; pdb.set_trace()
     x_min_all = min([min([v for v in d[1]]) for d in stripped_args])
     x_max_all = max([max([v for v in d[1]]) for d in stripped_args])
     y_min_all = min([min([v for v in d[2]]) for d in stripped_args])
@@ -284,7 +285,10 @@ def strip_graphing_data(x_range, data):
 def eval_model(model: [int], x: int) -> int:
     result = 0
     for i, coef in enumerate(model):
-        result += (coef * x) ** (len(model) - 1 - i)
+        if i != len(model) - 1:
+            result += coef * (x ** (len(model) - 1 - i))
+        else:
+            result += coef
 
     return result
 
@@ -333,19 +337,21 @@ setmod_eqn = fit_linear((1, 16), go_arith_benchmarks['setmod']['generic'], True)
 mulmont_evmmax_low = go_arith_benchmarks['mulmont']['non-unrolled']
 mulmont_evmmax_hi = go_arith_benchmarks['mulmont']['generic']
 
-mulmont_eqn_low = fit_quadratic((1, 12), mulmont_evmmax_low, True)
+mulmont_eqn_low = fit_quadratic((1, 16), mulmont_evmmax_low, True)
 mulmont_eqn_hi = fit_quadratic((fast_mulmont_cutoff, 10000), mulmont_evmmax_hi, True)
 
 #mulmont_model = stitch_model(mulmont_cost_low, mulmont_cost_hi, fast_mulmont_cutoff)
 benches_xs = list(sorted(set(list(mulmont_evmmax_low.keys()) + list(mulmont_evmmax_hi.keys()))))
-mulmont_model = prep_models_for_graphing([(mulmont_eqn_low, 12), (mulmont_eqn_hi, 100000)], 'mulmont model', benches_xs)
-
-mulmont_evmmax = stitch_data(go_arith_benchmarks['mulmont']['non-unrolled'], go_arith_benchmarks['mulmont']['generic'], fast_mulmont_cutoff)
-scatterplot_ns_data("charts/mulmontmax_all.png", "mulmontmax arithmetic benchmarks with gas model", (1, 100000), [False, False], ["o", "-"], [mulmont_evmmax, mulmont_model])
-scatterplot_ns_data("charts/mulmontmax_cutoff.png", "MULMONTMAX Arithmetic Benchmarks with Gas Model", (1, 64), [False, False], ["o", "-"], [mulmont_evmmax, mulmont_model])
-scatterplot_ns_data("charts/mulmontmax_low.png", "mulmontmax arithmetic benchmarks with gas model", (1, 16), [False, False], ["o", "-"], [mulmont_evmmax, mulmont_model])
+mulmont_model = prep_models_for_graphing([(mulmont_eqn_low, fast_mulmont_cutoff), (mulmont_eqn_hi, 100000)], 'mulmont model', benches_xs)
 
 import pdb; pdb.set_trace()
+
+mulmont_evmmax = stitch_data(go_arith_benchmarks['mulmont']['non-unrolled'], go_arith_benchmarks['mulmont']['generic'], fast_mulmont_cutoff)
+#scatterplot_ns_data("charts/mulmontmax_all.png", "mulmontmax arithmetic benchmarks with gas model", (1, 100000), [False, False], ["o", "-"], [mulmont_evmmax, mulmont_model])
+#scatterplot_ns_data("charts/mulmontmax_cutoff.png", "MULMONTMAX Arithmetic Benchmarks with Gas Model", (1, 64), [False, False], ["o", "-"], [mulmont_evmmax, mulmont_model])
+scatterplot_ns_data("charts/mulmontmax_low.png", "mulmontmax arithmetic benchmarks with gas model", (1, 16), [False, False], ["o", "-"], [mulmont_evmmax, mulmont_model])
+
+sys.exit(0)
 
 # mulmont_eqn_low = 
 # TODO addmod/submod with model on graph
