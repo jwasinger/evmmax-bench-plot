@@ -109,7 +109,6 @@ def scatterplot_ns_data(fname: str, name: str, graph_range, annotates: [bool], m
                 stripped_yerrs.append(y_err_val)
         stripped_args.append((arg[0], stripped_xs, stripped_ys, stripped_yerrs, arg[4], arg[5], arg[6]))
 
-    import pdb; pdb.set_trace()
     x_min_all = min([min([v for v in d[1]]) for d in stripped_args])
     x_max_all = max([max([v for v in d[1]]) for d in stripped_args])
     y_min_all = min([min([v for v in d[2]]) for d in stripped_args])
@@ -119,8 +118,9 @@ def scatterplot_ns_data(fname: str, name: str, graph_range, annotates: [bool], m
 
     plt.rcParams["figure.figsize"] = (20, 10)
     fig, ax = plt.subplots()
-    plt.ylim(0, y_min_all + span_y * 1.2)
-    plt.xlim(0, x_min_all + span_x * 1.2)
+    plt.ylim(0, y_min_all + int(span_y * 1.2))
+    plt.xlim(0, x_min_all + int(span_x * 1.2))
+    plt.xticks(stripped_args[0][1])
 
     for i, (x_range, x_vals, y_vals, y_errs, color, label, marker) in enumerate(stripped_args):
         assert len(x_vals) == len(y_vals)
@@ -326,7 +326,6 @@ setmod_generic_data = format_bench_data_for_graphing((1, 100000), go_arith_bench
 
 # linear cost for setmod up to cutoff
 # setmod_low_eqn, setmod_low_cost = fit_linear((1, 32), (1, fast_mulmont_cutoff), setmod_non_unrolled_data, False)
-#import pdb; pdb.set_trace()
 setmod_eqn = fit_linear((1, 16), go_arith_benchmarks['setmod']['generic'], True)
 # setmod_model = stitch_model(setmod_low_cost, setmod_high_cost, fast_mulmont_cutoff)
 
@@ -344,11 +343,9 @@ mulmont_eqn_hi = fit_quadratic((fast_mulmont_cutoff, 10000), mulmont_evmmax_hi, 
 benches_xs = list(sorted(set(list(mulmont_evmmax_low.keys()) + list(mulmont_evmmax_hi.keys()))))
 mulmont_model = prep_models_for_graphing([(mulmont_eqn_low, fast_mulmont_cutoff), (mulmont_eqn_hi, 100000)], 'mulmont model', benches_xs)
 
-import pdb; pdb.set_trace()
-
 mulmont_evmmax = stitch_data(go_arith_benchmarks['mulmont']['non-unrolled'], go_arith_benchmarks['mulmont']['generic'], fast_mulmont_cutoff)
-#scatterplot_ns_data("charts/mulmontmax_all.png", "mulmontmax arithmetic benchmarks with gas model", (1, 100000), [False, False], ["o", "-"], [mulmont_evmmax, mulmont_model])
-#scatterplot_ns_data("charts/mulmontmax_cutoff.png", "MULMONTMAX Arithmetic Benchmarks with Gas Model", (1, 64), [False, False], ["o", "-"], [mulmont_evmmax, mulmont_model])
+scatterplot_ns_data("charts/mulmontmax_all.png", "mulmontmax arithmetic benchmarks with gas model", (1, 100000), [False, False], ["o", "-"], [mulmont_evmmax, mulmont_model])
+scatterplot_ns_data("charts/mulmontmax_cutoff.png", "MULMONTMAX Arithmetic Benchmarks with Gas Model", (1, 64), [False, False], ["o", "-"], [mulmont_evmmax, mulmont_model])
 scatterplot_ns_data("charts/mulmontmax_low.png", "mulmontmax arithmetic benchmarks with gas model", (1, 16), [False, False], ["o", "-"], [mulmont_evmmax, mulmont_model])
 
 sys.exit(0)
