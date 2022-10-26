@@ -354,6 +354,7 @@ addmod_model = prep_models_for_graphing([(addmod_eqn, 100000)], 'addmod model', 
 # TODO use mix of impls
 # TODO don't use stitch_data to put it in graphing format
 addmod_evmmax = stitch_data(go_arith_benchmarks['addmod']['generic'], go_arith_benchmarks['addmod']['generic'], 100000)
+submod_evmmax = stitch_data(go_arith_benchmarks['submod']['generic'], go_arith_benchmarks['submod']['generic'], 100000)
 
 # mulmont_eqn_low = 
 # TODO addmod/submod with model on graph
@@ -361,20 +362,15 @@ addmod_evmmax = stitch_data(go_arith_benchmarks['addmod']['generic'], go_arith_b
 scatterplot_ns_data("charts/addmodx_low.png", "addmodx low limbs", (1, 12), [False, False], ["o", 'o'], [addmod_evmmax, addmod_model])
 scatterplot_ns_data("charts/addmodx_med.png", "addmodx medium limbs", (1, 100), [False, False], ["o", 'o'], [addmod_evmmax, addmod_model])
 scatterplot_ns_data("charts/addmodx_all.png", "addmodx all limbs", (1, 100000), [False, False], ["o", 'o'], [addmod_evmmax, addmod_model])
-import pdb; pdb.set_trace()
-sys.exit(0)
 
+scatterplot_ns_data("charts/submodx_low.png", "submodx low limbs", (1, 12), [False, False], ["o", 'o'], [submod_evmmax, addmod_model])
+scatterplot_ns_data("charts/submodx_med.png", "submodx medium limbs", (1, 100), [False, False], ["o", 'o'], [submod_evmmax, addmod_model])
+scatterplot_ns_data("charts/submodx_all.png", "submodx all limbs", (1, 100000), [False, False], ["o", 'o'], [submod_evmmax, addmod_model])
 
-setmod_evmmax_model_graphing_data = prep_model_data_for_graphing(setmod_model, "setmod", (1, 10000))
-scatterplot_ns_data("charts/setmodmax_all.png", "SETMODMAX model", (1, 100000), [False, False], ["o", "-"], [setmod_generic_data, setmod_evmmax_model_graphing_data])
-scatterplot_ns_data("charts/setmodmax_cutoff.png", "SETMODMAX model", (1, 64), [False, False], ["o", "-"], [setmod_generic_data, setmod_evmmax_model_graphing_data])
-scatterplot_ns_data("charts/setmodmax_low.png", "SETMODMAX model", (1, 16), [False, False], ["o", "-"], [setmod_generic_data, setmod_evmmax_model_graphing_data])
+setmod_evmmax = stitch_data(go_arith_benchmarks['setmod']['generic'], go_arith_benchmarks['setmod']['generic'], 100000)
+setmod_eqn = fit_linear((1, 100000), go_arith_benchmarks['setmod']['generic'], True)
+setmod_model = prep_models_for_graphing([(setmod_eqn, 100000)], 'setmod model', benches_xs)
 
-# These are broken:
-
-# mulmont_evmmax_model_low_limbs_graphing_data = strip_graphing_data((1, 12), mulmont_evmmax_model_graphing_data)
-# scatterplot_ns_data("charts/mulmontmax_low.png", "MULMONTMAX Arithmetic Benchmarks with Gas Model", (1, 12), [True, True], ["o", "o"], [mulmont_non_unrolled_small_limbs_data, mulmont_evmmax_model_low_limbs_graphing_data])
-# mulmont_evmmax_model_graphing_data = list(mulmont_evmmax_model_graphing_data)
-
-# setmod_evmmax_model_low_limbs_graphing_data = strip_graphing_data((1, 12), setmod_evmmax_model_graphing_data)
-# scatterplot_ns_data("charts/setmodmax_low.png", "SETMODMAX Benchmarks with Gas Model", (1, 12), [True, True], ["o", "o"], [setmod_non_unrolled_small_limbs_data, setmod_evmmax_model_low_limbs_graphing_data])
+scatterplot_ns_data("charts/setmodmax_all.png", "SETMODMAX model", (1, 100000), [False, False], ["o", "-"], [setmod_model, setmod_evmmax])
+scatterplot_ns_data("charts/setmodmax_cutoff.png", "SETMODMAX model", (1, 64), [False, False], ["o", "-"], [setmod_model, setmod_evmmax])
+scatterplot_ns_data("charts/setmodmax_low.png", "SETMODMAX model", (1, 16), [False, False], ["o", "-"], [setmod_model, setmod_evmmax])
