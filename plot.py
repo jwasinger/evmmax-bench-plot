@@ -302,9 +302,19 @@ def format_model_eqn_for_graphing(model: [int], xs: [int]):
 
     return result
 
+# originals (fit from the data)
+# setmod_eqn = [62.71, 2679.49]
+# mulmont_eqn_lo = [2.28, -0.72, 5.8782000000000005]
+# mulmont_eqn_hi = [0.01, 246.97, 17683.52]
+# addmod_eqn = [4.61, 3.6100000000000003]
+
+setmod_eqn = [63.0, 2680.0]
+mulmont_eqn_low = [2.3, -0.70, 6.0]
+mulmont_eqn_hi = [0.01, 247.0, -6700.0]
+addmod_eqn = [5.5, 3.0]
+
 fast_mulmont_cutoff = 49
 mulmont_benches = go_arith_benchmarks['mulmont']
-#eqn_mulmont_lof, mulmont_lof = fit_quadratic(zip([mulmont_benches['y_vals'])[:fast_mulmont_cutoff]
 mulmont_non_unrolled_data = format_bench_data_for_graphing((1, 64), go_arith_benchmarks['mulmont']['non-unrolled'], 'mulmont', 'red')
 mulmont_generic_data = format_bench_data_for_graphing((1, 64), go_arith_benchmarks['mulmont']['generic'], 'mulmont-generic', 'blue')
 
@@ -327,7 +337,6 @@ setmod_generic_data = format_bench_data_for_graphing((1, 100000), go_arith_bench
 
 # linear cost for setmod up to cutoff
 # setmod_low_eqn, setmod_low_cost = fit_linear((1, 32), (1, fast_mulmont_cutoff), setmod_non_unrolled_data, False)
-setmod_eqn = fit_linear((1, 16), go_arith_benchmarks['setmod']['generic'], True)
 # setmod_model = stitch_model(setmod_low_cost, setmod_high_cost, fast_mulmont_cutoff)
 
 #mulmont_evmmax = stitch_data(go_arith_benchmarks['mulmont']['non-unrolled'], go_arith_benchmarks['mulmont']['generic'], fast_mulmont_cutoff)
@@ -336,9 +345,6 @@ setmod_eqn = fit_linear((1, 16), go_arith_benchmarks['setmod']['generic'], True)
 
 mulmont_evmmax_low = go_arith_benchmarks['mulmont']['non-unrolled']
 mulmont_evmmax_hi = go_arith_benchmarks['mulmont']['generic']
-
-mulmont_eqn_low = fit_quadratic((1, 16), mulmont_evmmax_low, True)
-mulmont_eqn_hi = fit_quadratic((fast_mulmont_cutoff, 10000), mulmont_evmmax_hi, True)
 
 #mulmont_model = stitch_model(mulmont_cost_low, mulmont_cost_hi, fast_mulmont_cutoff)
 benches_xs = list(sorted(set(list(mulmont_evmmax_low.keys()) + list(mulmont_evmmax_hi.keys()))))
@@ -349,7 +355,6 @@ scatterplot_ns_data("charts/mulmontmax_all.png", "mulmontmax arithmetic benchmar
 scatterplot_ns_data("charts/mulmontmax_cutoff.png", "MULMONTMAX Arithmetic Benchmarks with Gas Model", (1, 64), [False, False], ["o", "-"], [mulmont_evmmax, mulmont_model])
 scatterplot_ns_data("charts/mulmontmax_low.png", "mulmontmax arithmetic benchmarks with gas model", (1, 16), [False, False], ["o", "-"], [mulmont_evmmax, mulmont_model])
 
-addmod_eqn = fit_linear((1, 100000), go_arith_benchmarks['addmod']['non-unrolled'], True)
 addmod_model = prep_models_for_graphing([(addmod_eqn, 100000)], 'addmod model', benches_xs)
 
 # TODO use mix of impls
